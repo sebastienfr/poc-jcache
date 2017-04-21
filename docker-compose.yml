@@ -1,0 +1,87 @@
+version: '3'
+
+services:
+  redismaster:
+    container_name: redismaster
+    restart: always
+    image: redis
+    volumes:
+      - ./conf/redis/master/redis.conf:/usr/local/etc/redis.conf
+    command: redis-server /usr/local/etc/redis.conf
+    networks:
+      redisnet:
+        ipv4_address: 172.10.0.10
+    ports:
+      - "6379:6379"
+
+  redisslave01:
+    container_name: redisslave01
+    restart: always
+    image: redis
+    networks:
+      redisnet:
+        ipv4_address: 172.10.0.11
+    volumes:
+      - ./conf/redis/slave01/redis.conf:/usr/local/etc/redis/redis.conf
+    command: redis-server /usr/local/etc/redis/redis.conf
+    ports:
+      - "6380:6380"
+
+  redisslave02:
+    container_name: redisslave02
+    restart: always
+    image: redis
+    networks:
+      redisnet:
+        ipv4_address: 172.10.0.12
+    volumes:
+      - ./conf/redis/slave02/redis.conf:/usr/local/etc/redis/redis.conf
+    command: redis-server /usr/local/etc/redis/redis.conf
+    ports:
+      - "6381:6381"
+
+#  redissentinelmaster:
+#    container_name: redissentinelmaster
+#    restart: always
+#    image: redis
+#    networks:
+#      redisnet:
+#        ipv4_address: 172.10.0.110
+#    volumes:
+#      - ./conf/redis/master/sentinel.conf:/usr/local/etc/redis/sentinel.conf
+#    command: redis-server /usr/local/etc/redis/sentinel.conf --sentinel
+#    ports:
+#      - "16379:16379"
+#
+#  redissentinelslave01:
+#    container_name: redissentinelslave01
+#    restart: always
+#    image: redis
+#    networks:
+#      redisnet:
+#        ipv4_address: 172.10.0.111
+#    volumes:
+#      - ./conf/redis/slave01/sentinel.conf:/usr/local/etc/redis/sentinel.conf
+#    command: redis-server /usr/local/etc/redis/sentinel.conf --sentinel
+#    ports:
+#      - "16380:16380"
+#
+#  redissentinelslave02:
+#    container_name: redissentinelslave02
+#    restart: always
+#    image: redis
+#    networks:
+#      redisnet:
+#        ipv4_address: 172.10.0.112
+#    volumes:
+#      - ./conf/redis/slave02/sentinel.conf:/usr/local/etc/redis/sentinel.conf
+#    command: redis-server /usr/local/etc/redis/sentinel.conf --sentinel
+#    ports:
+#      - "16381:16381"
+
+networks:
+  redisnet:
+    driver: bridge
+    ipam:
+     config:
+       - subnet: 172.10.0.0/24
